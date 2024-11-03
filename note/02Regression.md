@@ -33,6 +33,12 @@
   w^{t+1} = w^t - \frac{\eta}{\sqrt{\sum_{i=0}^t(g^i)^2}}g^t \\
   g^i = \frac{\partial L}{\partial w}|_{w = w^i}
   $$
+  Consider the ratio of $g^t$ and $g^i$ rather than value of $g^t$
+ - Second Derivative(mult-parameters)
+ $$Step \propto \frac{|First\ derivative|}{Second\ derivative}$$
+ Second derivative is hard to compute, so we use some methods to simulate the value of second derivative. For example, in Adagrad:
+ $$Second\ derivative = \sqrt{\sum_{i=0}^t(g^i)^2}$$
+ - Stochastic Gradient Descent(SGD)
 
 ## Sigmoid Function
 
