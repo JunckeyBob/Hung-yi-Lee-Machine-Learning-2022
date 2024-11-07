@@ -19,7 +19,7 @@
  - Self-supervised Learning: Without labels, one model value the loss by itself
    - Pre-trained model(Foundation Model)
    - Downstream Tasks
- - Generative Adversarial Network: Without labels, two models to value the loss of each other
+ - Generative Adversarial Network: Without labels, match input and output autonomously
  - Reinforcement Learning: Without labels, use dynamic environment to learn
 
 ## Cutting-edge research
@@ -29,4 +29,5 @@
  - Domain Adaptation
  - Network Compression
  - Life-long Learning
- - Meta Learning: Learn how to learn
+ - Meta Learning: Learn how to design learning algorithm
+ - Few-shot Learning: Also meta learning

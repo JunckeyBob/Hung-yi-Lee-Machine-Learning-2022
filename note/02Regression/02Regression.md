@@ -8,8 +8,9 @@
    - `b` bias
    - `x` input or object, $x^i$ means a component of object, $x_i$ means an index of object
  - Step2: define loss
-  $$L(w, b) = \sum_{n=1}^{N}(\hat{y}-y)^2$$
+  $$L(w, b) = \sum_{n=1}^{N}(\hat{y}^n-y^n)^2$$
  - Step3: optimization
+  $$w_{i} \leftarrow w_{i}-\eta \sum_{n=1}^{N}-\left(\hat{y}^n-y^n\right)x_i^n$$
 
 ### Gradient Descent
  - Step1:(Randomly) Pick an initial value $w^0$
@@ -20,7 +21,7 @@
   \eta: learning\ rate(hyperparameter)
   $$
 
-Gradient descent can only find out local minima or even worse, saddle point. 
+**Drawback**: Gradient descent can only find out local minima or even worse, saddle point. 
 
 ### Better Learning Rate
  - Adaptive Learning Rate
@@ -103,8 +104,87 @@ The number of ReLU Function is twice as many as of the number of Sigmoid Functio
 
 Functions like sigmoid function and ReLU function are called activation function.
 
-## Introduction to Deep Learning
+## Neural Network Model
 Put the output of former layer of network as the input of next layter of network
- - Layer: A model represented before can be called a layer of network
- - Neuron: The activation function such as sigmoid function
+$$
+\boldsymbol{a'} = \sigma(\boldsymbol{b'} + W'\boldsymbol{\underline{a}}) \\
+\boldsymbol{\underline{a}} = \sigma(\boldsymbol{b} + W\boldsymbol{x})
+$$
 ![Network Model](./figures/02Network.png)
+ - Layer: A model represented before can be called a layer of network
+ - Neuron: Connection between layer input and output
+
+## Logistic Regression
+### Step1: Fuction with Unknown
+In Binary Classification(Lecture05), we get $P(C|x) = \frac{1}{1 + e^{-(b+\boldsymbol{w}^T \boldsymbol{x})}} = sigmoid(b+\boldsymbol{w}^T \boldsymbol{x})$. 
+
+We can write this model as $f_{\boldsymbol{w}, b}(\boldsymbol{x}) = \sigma(\boldsymbol{w}^T\boldsymbol{x} + b)$ which is actually logistic regression. 
+
+### Step2: Define Loss
+$$
+L(\boldsymbol{w}, b) = \prod_{n}f(x^n)^{\hat{y}^n}\left(1-f(x^n)\right)^{1-\hat{y}^n} \\
+\ln L(w, b) = \sum_{n}\hat{y}^n\ln f(x^n) + (1-\hat{y}^n)\ln (1-f(x^n))
+$$
+
+**Cross entropy**: Suppose there is a random variable $X$, and its probability distribution is $P(X)$. When we deal with practical problems, we use an approximate distribution $Q(X)$ for fitting. At this time, the amount of information required to convey information is:
+$$
+H(P, Q) = -\sum_{n} P(X = x_n)\log Q(X = x_n)
+$$
+
+Also cross entropy can be written as $H(P, Q) = \mathbb{E}_{X \sim P}[-\log Q(x)]$
+
+Then for logistic regression model, its loss can be written as a corss entropy of Bernulli Distribution.
+
+### Step3: Optimization
+$$
+w^*, b^* = arg \max_{w, b}L(w, b) \\
+\Leftrightarrow w^*, b^* = arg \min_{w, b}\left(-\ln{L(w, b)}\right) \\
+$$
+
+For logical regression, we can cacualte the derivative: 
+$$
+\begin{aligned}
+\frac{\partial{\ln f_{w, b}(x^n)}}{\partial{w_i}} &= \frac{\partial{\ln \sigma(z)}}{\partial{\sigma(z)}}\frac{\partial{\sigma(z)}}{\partial{z}}\frac{\partial{z}}{\partial{w_i}} \\
+& = \frac{1}{\sigma(z)} \cdot \sigma(z)(\sigma(z)-1)\cdot x_i^n \\
+&= (f_{w, b}(x^n)-1)x_i^n \\
+where\ z &= \boldsymbol{w}^T\boldsymbol{x} + b
+\end{aligned}
+$$
+
+Then we can caculate derivative of loss function:
+$$
+\begin{aligned}
+-\frac{\partial{\ln L(w, b)}}{\partial{w_i}} &= -\sum_{n}\hat{y}^n\ln f(x^n) + (1-\hat{y}^n)\ln (1-f(x^n)) \\
+&= -\sum_{n}\hat{y}^n(f(x^n)-1)x_i^n + (1-\hat{y}^n)f(x^n)x_i^n \\
+&= \sum_{n}-\left(\hat{y}^n-f(x^n)\right)x_i^n
+\end{aligned}
+$$
+
+Then we should update by:
+$$
+w_{i} \leftarrow w_{i}-\eta \sum_{n}-\left(\hat{y}^n-f(x^n)\right)x_i^n
+$$
+
+It's as same as linear regression. 
+
+### Why Not Square Error?
+ - Step1: $f_{\boldsymbol{w}, b}(\boldsymbol{x}) = \sigma(\boldsymbol{w}^T\boldsymbol{x} + b)$
+ - Step2: $L(w, b) = \sum_{n=1}^{N}(\hat{y}^n-f_{\boldsymbol{w}, b}(\boldsymbol{x^n}))^2$
+ - Step3: 
+  $$
+  \begin{aligned}
+  \frac{\partial{L}}{\partial{w_i}} &= \sum_{n=1}^{N}2(\hat{y}^n-f_{\boldsymbol{w}, b}(\boldsymbol{x^n}))\frac{\partial{f_{\boldsymbol{w}, b}(\boldsymbol{x})}}{\partial{(\boldsymbol{w}^T\boldsymbol{x} + b)}}\frac{\partial{\boldsymbol{w}^T\boldsymbol{x} + b}}{\partial{w_i}} \\
+  &= \sum_{n=1}^{N}2(\hat{y}^n-f_{\boldsymbol{w}, b}(\boldsymbol{x^n}))f_{\boldsymbol{w}, b}(\boldsymbol{x^n})(1-f_{\boldsymbol{w}, b}(\boldsymbol{x^n}))x_i
+  \end{aligned}
+  $$
+
+  In the figure below, red represents cross entropy and black represents square error.
+  ![Cross Entropy and Square](./figures/02Errors.png)
+
+  When output $y^n$ is far from label $\hat{y}^n$, derivative of square error is close to zero, which will slow down the learning. 
+
+### Limitation of Logistic Regression
+By logistic regress, space can only be divided using straight lines. So we may can not divide samples into correct categories. 
+
+To solve that problem, we introduce **Feature Transformation** to pre-process input data. However, it's hard to get a certain feature transformation function so we can use another ML model to be feature transformer. 
+![Feature Transformer](./figures/02FeatureTransformer.png)
