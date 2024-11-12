@@ -30,6 +30,7 @@
   \eta^t = \frac{\eta}{\sqrt{t+1}} \\
   t: number\ of\ iterations
   $$
+ 
  - Adaptive Gradient Descent(Adagrad)
   Each parameter has a different learning rate
   $$
