@@ -63,6 +63,74 @@ However, in practical applications, we need to make some designs based on the ch
   Alpha Go does not use neither Pooling nor Padding
 
 ### Drawback
-CNN is not invariant to scaling and rotation (we need data augmentation).
+CNN is not invariant to scaling and rotation (we need data augmentation). 
 
 ### Spatial Transformer Layer
+The layer used to perform basic graphics operations on images (such as traslation, rotation, scaling) which is called ST layer. 
+![](./figures/multi-layer.png)
+ - End-to-end learn: Divide learning process into different modules and link these modules into a pipeline. We can use multiple ST layers to get better performance. 
+
+#### Transformation Matrix
+$$
+\begin{bmatrix}
+  x' \\ y'
+\end{bmatrix} = 
+\begin{bmatrix}
+  a &b \\
+  c &d \\
+\end{bmatrix}
+\begin{bmatrix}
+  x \\ y
+\end{bmatrix} + 
+\begin{bmatrix}
+  e \\ f
+\end{bmatrix}
+$$
+
+ - Translation
+  $$
+  \begin{bmatrix}
+    x' \\ y'
+  \end{bmatrix} = 
+  \begin{bmatrix}
+    1 &0 \\
+    0 &1 \\
+  \end{bmatrix}
+  \begin{bmatrix}
+    x \\ y
+  \end{bmatrix} + 
+  \begin{bmatrix}
+    e \\ f
+  \end{bmatrix}
+  $$
+ - Rotation
+  $$
+  \begin{bmatrix}
+    x' \\ y'
+  \end{bmatrix} = 
+  \begin{bmatrix}
+    cos\theta &-sin\theta \\
+    sin\theta &cos\theta \\
+  \end{bmatrix}
+  \begin{bmatrix}
+    x \\ y
+  \end{bmatrix}
+  $$
+ - Scaling
+  $$
+  \begin{bmatrix}
+    x' \\ y'
+  \end{bmatrix} = 
+  \begin{bmatrix}
+    a &0 \\
+    0 &d \\
+  \end{bmatrix}
+  \begin{bmatrix}
+    x \\ y
+  \end{bmatrix}
+  $$
+
+#### Interpolation
+![](./figures/interpolation.png)
+
+Convert discrete functions into continuous functions by applying the gradient descent method
